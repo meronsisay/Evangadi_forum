@@ -8,7 +8,7 @@ const dbconnection = require('./db/dbConfig')
 
 
 const app = express();
-const port = 3001
+const port = 3004
 
 
 // sample to test the server is working
@@ -19,6 +19,8 @@ const port = 3001
 // user routes middleware file
 const useRoutes = require("./routes/userRoute")
 
+// json middleware to extract json data
+app.use(express.json())
 // user routes middleware 
 app.use("/app/users", useRoutes)
 
