@@ -22,7 +22,7 @@ const useRoutes = require("./routes/userRoute")
 // json middleware to extract json data
 app.use(express.json())
 // user routes middleware 
-app.use("/app/users", useRoutes)
+app.use("/api/users", useRoutes)
 
 // questions routes middleware ??
 

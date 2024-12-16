@@ -10,18 +10,18 @@ async function register(req,res) {
     // res.send("register")
     const {username, firstname, lastname, email,password } = req.body
     if (!username || !firstname || !lastname || !email || !password ){
-        return  res.status(StatusCodes.BAD_REQUEST).json({ error: "Bad Request",
+        return  res.status(StatusCodes.BAD_REQUEST).json({ 
                          msg: "please provide all required information"})
     }
     try {
         const [user] = await dbconnection.query ("SELECT username, userid FROM users WHERE username = ? or email = ?",[username,email])
         // return  res.json({user: user})
         if(user.length>0){
-            return  res.status(StatusCodes.CONFLICT).json({ error: "Conflict",
+            return  res.status(StatusCodes.CONFLICT).json({ 
                                          msg: "user already register"})
         }
         if(password.length <= 8){
-            return  res.status(StatusCodes.BAD_REQUEST).json({ error: "Bad Request",
+            return  res.status(StatusCodes.BAD_REQUEST).json({ 
                                     msg: "password must be at least 8 characters"})                        
         }
 
@@ -29,21 +29,41 @@ async function register(req,res) {
         const salt = await bcrypt.genSalt(10)
        const hashedpassword = await bcrypt.hash(password,salt) 
         await dbconnection.query("INSERT INTO users (username,firstname ,lastname,email, password)VALUES (?,?,?,?,?)" ,[username,firstname ,lastname,email,  hashedpassword] )
-        return  res.status(StatusCodes.CREATED).json({  error: "Created",
+        return  res.status(StatusCodes.CREATED).json({ 
             msg: "User registered successfully"})
     } catch (error) {
         console.log(error.message);
-        return  res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({error: "Internal Server Error",
+        return  res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                                  msg: "An unexpected error occurred."})
     }
 }
 
 async function login(req,res) {
-    // res.send("login")
+    res.send("login")
+    const {email,password} = req.body;
+    if(!email || !password) {
+        return res.status(StatusCodes.BAD_REQUEST).json({ msg: "Please provide all required fields"});
+    }
+    try {
+         const [user] = await dbconnection.query ("SELECT username, userid , password FROM users WHERE email = ?",[email])
+
+        if (user.length == 0){
+            return res.status(StatusCodes.UNAUTHORIZED).json({ msg: "Invalid username or password"})
+        }
+        // COMPARE password..., we use awaite b/c of isMatch return as apromise boolean value and also user is an array
+        const isMatch = await bcrypt.compare(password,user[0].password);
+        if(!isMatch){
+            return res.status(StatusCodes.UNAUTHORIZED).json({ msg: "Invalid username or password"})
+        }
+    } catch (error) {
+        console.log(error.message);  
+        return  res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+            msg: "An unexpected error occurred."})
+    }
 }
 
 async function checkUser(req,res) {
-    // res.send("check user")
+    res.send("check user")
 }
 
 module.exports = {register,login,checkUser}
