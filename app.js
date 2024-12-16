@@ -1,7 +1,15 @@
+
 const express = require('express');
 
+         // db connection
+const dbconnection = require('./db/dbConfig')
+
+
+
+
 const app = express();
-const port = 5500
+const port = 3001
+
 
 // sample to test the server is working
 // app.get(`/`, (req, res)=> {
@@ -19,14 +27,20 @@ app.use("/app/users", useRoutes)
 
 // answers routes middleware ??
 
+async function start() {
+    try {
+      const result = await dbconnection.execute("select 'test' ") 
+    // const [result] = await dbconnection.query("SELECT 'test' AS result");
 
-app.listen(5500,(err)=>{
-if(err) {
-    console.log(err.message);
-    
-}else{
-    console.log(`listening on ${port}`);
-    
+        console.log(result)
+       await app.listen(port)
+        console.log("database connection established")
+        console.log(`listing on ${port}`)
+     } catch (error) {
+         console.log(error.message);
+         
+     }
+     
 }
+ start() 
 
-})
