@@ -5,6 +5,9 @@ const dbconnection = require('../db/dbConfig')
 
 const  bcrypt = require('bcrypt')
 const  {StatusCodes} = require('http-status-codes')
+const jwt = require("jsonwebtoken");
+
+
 
 async function register(req,res) {
     // res.send("register")
@@ -39,8 +42,10 @@ async function register(req,res) {
 }
 
 async function login(req,res) {
-    res.send("login")
+    // res.send("login")
     const {email,password} = req.body;
+    // console.log(req.body);
+
     if(!email || !password) {
         return res.status(StatusCodes.BAD_REQUEST).json({ msg: "Please provide all required fields"});
     }
@@ -55,7 +60,23 @@ async function login(req,res) {
         if(!isMatch){
             return res.status(StatusCodes.UNAUTHORIZED).json({ msg: "Invalid username or password"})
         }
-    } catch (error) {
+
+
+           // Generate JWT token use to user hold in signin
+    const username = user[0].username;
+    const userid = user[0].userid;
+    const secret = process.env.JWT_SECRET;
+    // console.log(username, userid);
+    const token = jwt.sign({ username, userid }, secret, {
+      expiresIn: "1d", // Token expires in 1 day
+    });
+
+    // Return the token and success message
+    return res.status(StatusCodes.OK).json({
+      msg: "User logged in successfully",
+      token: token,
+    });
+    } catch (error) { 
         console.log(error.message);  
         return  res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
             msg: "An unexpected error occurred."})

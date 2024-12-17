@@ -1,5 +1,7 @@
 
 const express = require('express');
+require('dotenv').config();
+
 
          // db connection
 const dbconnection = require('./db/dbConfig')
@@ -28,6 +30,7 @@ app.use("/api/users", useRoutes)
 
 
 // answers routes middleware ??
+
 
 async function start() {
     try {
