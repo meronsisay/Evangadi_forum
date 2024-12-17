@@ -4,7 +4,7 @@ require('dotenv').config();
 
 
          // db connection
-const dbconnection = require('./db/dbConfig')
+const dbconnection = require('./db/dbConfig');
 
 
 
@@ -19,12 +19,19 @@ const port = 3004
 // })
 
 // user routes middleware file
-const useRoutes = require("./routes/userRoute")
+const useRoutes = require("./routes/userRoute");
+const questionRoute = require("./routes/questionRoute");
+const answerRoute = require("./routes/answerRoute")
+
+
 
 // json middleware to extract json data
-app.use(express.json())
+app.use(express.json());
 // user routes middleware 
-app.use("/api/users", useRoutes)
+app.use("/api/users", useRoutes);
+
+app.use("/api", questionRoute)
+app.use("/api", answerRoute)
 
 // questions routes middleware ??
 
