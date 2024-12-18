@@ -2,12 +2,15 @@
 const mysql2 = require('mysql2');
 
 const dbconnection = mysql2.createPool({
-    user:"Evangadi-admin", 
-    database:"evangadi-forum",
-    host:"localhost",
-    password:"123456",
+user:process.env.USER,  
+database:process.env.DATA_BASE,
+host:"localhost",
+password:process.env.PASSWORD,
     connectionLimit: 10
 })
+
+// check the connection b/n dotenv & dbConfig first require dotenv with config @ app.js
+console.log(process.env.JWT_SECRET);
 
 
 // when we insert data for  register,answer,question....will happen call backheal so we should turn to PROMISE based
